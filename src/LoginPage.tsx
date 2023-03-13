@@ -2,12 +2,13 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { AES, enc } from "crypto-js";
 import storage from "./storage";
 import { v4 as uuid } from "uuid";
+import { UserData } from "./types";
 import styles from "./LoginPage.module.css";
 
 const PASSPHRASE_STORAGE_KEY = "passphrase";
 
 type Props = {
-  setUserData: (userData: { username: string; passphrase: string }) => void;
+  setUserData: (userData: UserData) => void;
 };
 
 function LoginPage({ setUserData }: Props) {
