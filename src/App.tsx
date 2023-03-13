@@ -5,6 +5,7 @@ import styles from "./App.module.css";
 import NoteEditor from "./NoteEditor";
 import { Note } from "./types";
 import storage from "./storage";
+import debounce from "./debounce";
 
 const STORAGE_KEY = "notes";
 
@@ -23,13 +24,13 @@ const loadNotes = () => {
   return notes;
 };
 
-const saveNote = (note: Note) => {
+const saveNote = debounce((note: Note) => {
   const noteIds = storage.get<string[]>(STORAGE_KEY, []);
   const noteIdsWithoutNote = noteIds.filter((id) => id !== note.id);
 
   storage.set(STORAGE_KEY, [...noteIdsWithoutNote, note.id]);
   storage.set(`${STORAGE_KEY}:${note.id}`, note);
-};
+}, 200);
 
 function App() {
   const [notes, setNotes] = useState<Record<string, Note>>(() => loadNotes());
@@ -41,15 +42,19 @@ function App() {
     content: JSONContent,
     title = "New note"
   ) => {
+    const updatedNote = {
+      ...notes[noteId],
+      updatedAt: new Date(),
+      content,
+      title,
+    };
+
     setNotes((notes) => ({
       ...notes,
-      [noteId]: {
-        ...notes[noteId],
-        updatedAt: new Date(),
-        content,
-        title,
-      },
+      [noteId]: updatedNote,
     }));
+
+    saveNote(updatedNote);
   };
 
   const handleCreateNewNote = () => {
