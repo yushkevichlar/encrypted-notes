@@ -8,6 +8,7 @@
 .toolbar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   border-bottom: 1px solid #e2e8f0;
   gap: 0.25rem;
   padding: 0.5rem;
@@ -22,6 +23,8 @@
 
 .textEditorContent {
   overflow: auto;
+  height: 90vh;
+  width: 90vw;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
