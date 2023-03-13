@@ -1,7 +1,3 @@
-* {
-  font-family: sans-serif;
-}
-
 .pageContainer {
   height: 100vh;
   overflow: hidden;
@@ -18,49 +14,42 @@
   border-right: 1px solid #e2e8f0;
 }
 
-.editorContainer {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #e2e8f0;
-  gap: 0.25rem;
-}
-
-.textEditor {
-  outline: none;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.textEditorContent {
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  padding: 0 1.5rem;
-}
-
-.toolbarButton {
+.sidebarButton {
+  margin: 1.5rem;
   padding: 0.5rem;
-  border-radius: 0.25rem;
   background-color: #ffffff;
+  border-radius: 0.25rem;
+  box-shadow: 0px 2px 5px 0px #e2e8f0;
+  border: 1px solid #e2e8f0;
+  font-weight: 600;
   color: #0f172a;
-  border: none;
   cursor: pointer;
 }
 
-.toolbarButton:hover {
+.sidebarButton:hover {
+  border: 1px solid #cbd5e1;
+}
+
+.sidebarList {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  gap: 0.125rem;
+  padding: 0.5rem 0;
+}
+
+.sidebarItem {
+  padding: 0.5rem;
+  margin: 0 1.5rem;
+  cursor: pointer;
+  border-radius: 0.25rem;
+}
+
+.sidebarItem:hover {
   background-color: #f1f5f9;
 }
 
-.toolbarButtonActive {
-  composes: toolbarButton;
+.sidebarItemActive {
+  composes: sidebarItem;
   background-color: #e2e8f0;
 }
