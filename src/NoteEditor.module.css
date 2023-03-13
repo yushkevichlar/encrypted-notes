@@ -10,6 +10,7 @@
   align-items: center;
   border-bottom: 1px solid #e2e8f0;
   gap: 0.25rem;
+  padding: 0.5rem;
 }
 
 .textEditor {
@@ -24,7 +25,7 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  padding: 0 1.5rem;
+  padding: 1.5rem;
 }
 
 .toolbarButton {

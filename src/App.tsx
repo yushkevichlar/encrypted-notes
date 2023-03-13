@@ -83,7 +83,9 @@ function App() {
           }
         />
       ) : (
-        <div>Create a new note or select an existing one</div>
+        <div className={styles.notSelectedText}>
+          Create a new note or select an existing one
+        </div>
       )}
     </div>
   );
