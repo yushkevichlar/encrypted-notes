@@ -5,6 +5,7 @@ import {
   generateText,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import HardBreak from "@tiptap/extension-hard-break";
 import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
 import TaskItem from "@tiptap/extension-task-item";
@@ -28,6 +29,13 @@ import { Note } from "./types";
 const extensions = [
   StarterKit,
   Highlight,
+  HardBreak.extend({
+    addKeyboardShortcuts() {
+      return {
+        Enter: () => this.editor.commands.setHardBreak(),
+      };
+    },
+  }),
   TextAlign.configure({
     types: ["heading", "paragraph"],
   }),
