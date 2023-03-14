@@ -7,6 +7,8 @@ import { Note, UserData } from "./types";
 import storage from "./storage";
 import debounce from "./debounce";
 import { AES, enc } from "crypto-js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleXmark } from "@fortawesome/free-regular-svg-icons/faCircleXmark";
 
 const STORAGE_KEY = "notes";
 
@@ -19,14 +21,16 @@ const loadNotes = ({ username, passphrase }: UserData) => {
       `${username}:${STORAGE_KEY}:${id}`
     );
 
-    const note: Note = JSON.parse(
-      AES.decrypt(encryptedNote, passphrase).toString(enc.Utf8)
-    );
+    if (encryptedNote) {
+      const note: Note = JSON.parse(
+        AES.decrypt(encryptedNote, passphrase).toString(enc.Utf8)
+      );
 
-    notes[note.id] = {
-      ...note,
-      updatedAt: new Date(note.updatedAt),
-    };
+      notes[note.id] = {
+        ...note,
+        updatedAt: new Date(note.updatedAt),
+      };
+    }
   });
 
   return notes;
@@ -98,6 +102,22 @@ function App({ userData }: Props) {
     setActiveNoteId(id);
   };
 
+  const handleDeleteNote = (noteId: string) => {
+    storage.remove(`${userData.username}:${STORAGE_KEY}:${noteId}`);
+
+    let notesWithoutNote = {};
+
+    for (let key in notes) {
+      if (key !== noteId) {
+        notesWithoutNote[key] = notes[key];
+      }
+    }
+
+    setNotes(() => ({
+      ...notesWithoutNote,
+    }));
+  };
+
   const notesList = Object.values(notes).sort(
     (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
   );
@@ -111,17 +131,29 @@ function App({ userData }: Props) {
 
         <div className={styles.sidebarList}>
           {notesList.map((note) => (
-            <div
-              key={note.id}
-              role="button"
-              tabIndex={0}
-              className={
-                note.id === activeNoteId
-                  ? styles.sidebarItemActive
-                  : styles.sidebarItem
-              }
-              onClick={() => handleChangeActiveNote(note.id)}>
-              {note.title}
+            <div key={note.id}>
+              <div className={styles.sidebarItemContainer}>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  className={
+                    note.id === activeNoteId
+                      ? styles.sidebarItemActive
+                      : styles.sidebarItem
+                  }
+                  onClick={() => handleChangeActiveNote(note.id)}>
+                  {note.title}
+                </div>
+
+                <div
+                  role="button"
+                  tabIndex={1}
+                  className={styles.deleteIconContainer}
+                  title="Delete note"
+                  onClick={() => handleDeleteNote(note.id)}>
+                  <FontAwesomeIcon icon={faCircleXmark} />
+                </div>
+              </div>
             </div>
           ))}
         </div>
