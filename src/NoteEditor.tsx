@@ -29,13 +29,13 @@ import { Note } from "./types";
 const extensions = [
   StarterKit,
   Highlight,
-  HardBreak.extend({
-    addKeyboardShortcuts() {
-      return {
-        Enter: () => this.editor.commands.setHardBreak(),
-      };
-    },
-  }),
+  // HardBreak.extend({
+  //   addKeyboardShortcuts() {
+  //     return {
+  //       Enter: () => this.editor.commands.setHardBreak(),
+  //     };
+  //   },
+  // }),
   TextAlign.configure({
     types: ["heading", "paragraph"],
   }),

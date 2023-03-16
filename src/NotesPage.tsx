@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { JSONContent } from "@tiptap/react";
 import { v4 as uuid } from "uuid";
 import styles from "./NotesPage.module.css";
@@ -9,46 +9,93 @@ import debounce from "./debounce";
 import { AES, enc } from "crypto-js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-regular-svg-icons/faCircleXmark";
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { db } from "./db";
 
 const STORAGE_KEY = "notes";
 
-const loadNotes = ({ username, passphrase }: UserData) => {
-  const noteIds = storage.get<string[]>(`${username}:${STORAGE_KEY}`, []);
+const loadNotes = async ({ username, passphrase }: UserData) => {
+  // const noteIds = storage.get<string[]>(`${username}:${STORAGE_KEY}`, []);
+  // const notes: Record<string, Note> = {};
+
+  let noteIds: string[] = [];
   const notes: Record<string, Note> = {};
 
-  noteIds.forEach((id) => {
-    const encryptedNote = storage.get<string>(
-      `${username}:${STORAGE_KEY}:${id}`
-    );
+  try {
+    const snapshot = await db.ref("/notes").get();
 
-    if (encryptedNote) {
-      const note: Note = JSON.parse(
-        AES.decrypt(encryptedNote, passphrase).toString(enc.Utf8)
-      );
+    if (snapshot.exists()) {
+      const data = snapshot.val();
 
-      notes[note.id] = {
-        ...note,
-        updatedAt: new Date(note.updatedAt),
-      };
+      for (let key in data) {
+        if (key.split(":").shift() === username) {
+          noteIds.push(key.split(":").pop());
+        }
+      }
+
+      noteIds.forEach((id) => {
+        // const encryptedNote = storage.get<string>(
+        //   `${username}:${STORAGE_KEY}:${id}`
+        // );
+
+        let encryptedNote = "";
+
+        for (let key in data) {
+          if (key.includes(id)) {
+            encryptedNote = data[key].encryptedNote;
+          }
+        }
+
+        if (encryptedNote) {
+          const note: Note = JSON.parse(
+            AES.decrypt(encryptedNote, passphrase).toString(enc.Utf8)
+          );
+
+          notes[note.id] = {
+            ...note,
+            updatedAt: new Date(note.updatedAt),
+          };
+        }
+      });
+
+      return notes;
+    } else {
+      console.log("NO DATA");
     }
-  });
-
-  return notes;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const saveNote = debounce((note: Note, { username, passphrase }: UserData) => {
-  const noteIds = storage.get<string[]>(`${username}:${STORAGE_KEY}`, []);
-  const noteIdsWithoutNote = noteIds.filter((id) => id !== note.id);
+const saveNote = debounce(
+  async (note: Note, { username, passphrase }: UserData) => {
+    const noteIds = storage.get<string[]>(`${username}:${STORAGE_KEY}`, []);
+    const noteIdsWithoutNote = noteIds.filter((id) => id !== note.id);
 
-  storage.set(`${username}:${STORAGE_KEY}`, [...noteIdsWithoutNote, note.id]);
+    storage.set(`${username}:${STORAGE_KEY}`, [...noteIdsWithoutNote, note.id]);
 
-  const encryptedNote = AES.encrypt(
-    JSON.stringify(note),
-    passphrase
-  ).toString();
+    const encryptedNote = AES.encrypt(
+      JSON.stringify(note),
+      passphrase
+    ).toString();
 
-  storage.set(`${username}:${STORAGE_KEY}:${note.id}`, encryptedNote);
-}, 200);
+    storage.set(`${username}:${STORAGE_KEY}:${note.id}`, encryptedNote);
+
+    try {
+      const snapshot = await db.ref("/notes").get();
+
+      if (snapshot.exists()) {
+        const key = `${username}:${STORAGE_KEY}:${note.id}`;
+        db.ref(`notes/${key}`).set({ encryptedNote });
+      } else {
+        console.log("NO DATA");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  200
+);
 
 type Props = {
   userData: UserData;
@@ -58,6 +105,7 @@ function App({ userData }: Props) {
   const [notes, setNotes] = useState<Record<string, Note>>(() =>
     loadNotes(userData)
   );
+
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
   const activeNote = activeNoteId ? notes[activeNoteId] : null;
 
@@ -105,6 +153,10 @@ function App({ userData }: Props) {
   const handleDeleteNote = (noteId: string) => {
     storage.remove(`${userData.username}:${STORAGE_KEY}:${noteId}`);
 
+    const key = `${userData.username}:${STORAGE_KEY}:${noteId}`;
+
+    db.ref(`notes/${key}`).remove();
+
     let notesWithoutNote = {};
 
     for (let key in notes) {
@@ -118,14 +170,38 @@ function App({ userData }: Props) {
     }));
   };
 
+  useEffect(() => {
+    loadNotes(userData).then((data) => {
+      setNotes(data);
+    });
+  }, []);
+
   const notesList = Object.values(notes).sort(
     (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
   );
 
+  const handleLogOut = () => {
+    localStorage.removeItem("email");
+    window.location.reload();
+  };
+
+  if (!notesList)
+    return (
+      <div className={styles.loadingMessage}>
+        <p>
+          Loading<span>.</span>
+          <span>.</span>
+          <span>.</span>
+        </p>
+      </div>
+    );
+
   return (
     <div className={styles.pageContainer}>
       <div className={styles.sidebar}>
-        <button className={styles.sidebarButton} onClick={handleCreateNewNote}>
+        <button
+          className={styles.sidebarNewNoteBtn}
+          onClick={handleCreateNewNote}>
           New Note
         </button>
 
@@ -157,6 +233,11 @@ function App({ userData }: Props) {
             </div>
           ))}
         </div>
+
+        <button className={styles.sidebarLogoutBtn} onClick={handleLogOut}>
+          <FontAwesomeIcon icon={faRightFromBracket} />
+          Logout
+        </button>
       </div>
 
       {activeNote ? (

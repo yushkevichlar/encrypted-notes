@@ -11,11 +11,12 @@
   min-width: 15rem;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   border-right: 1px solid #e2e8f0;
   background-color: #9fc6f1;
 }
 
-.sidebarButton {
+.sidebarNewNoteBtn {
   margin: 1.5rem;
   padding: 0.5rem;
   background-color: #ffffff;
@@ -26,13 +27,24 @@
   cursor: pointer;
 }
 
-.sidebarButton:hover {
-  border: 1px solid #cbd5e1;
+.sidebarLogoutBtn {
+  composes: sidebarNewNoteBtn;
+  font-size: 0.7rem;
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.sidebarNewNoteBtn:hover {
+  filter: drop-shadow(5px 5px 20px #e2e8f0);
 }
 
 .sidebarList {
   display: flex;
   flex-direction: column;
+  flex-grow: 3;
   overflow: auto;
   gap: 0.125rem;
   padding-top: 0.5rem;
@@ -77,4 +89,44 @@
 
 .deleteIconContainer:hover {
   filter: opacity(0.5);
+}
+
+.loadingMessage {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.loadingMessage {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+}
+
+.loadingMessage span {
+  animation-name: blink;
+  animation-duration: 1.4s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+.loadingMessage span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loadingMessage span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0.2;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
 }
