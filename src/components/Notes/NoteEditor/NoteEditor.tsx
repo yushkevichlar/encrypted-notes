@@ -223,7 +223,7 @@ function NoteEditor({ note, onChange }: Props) {
             }
             type="button"
             title="Align Left"
-            onClick={() => editor.chain().focus().setTextAlign("left").run()}>
+            onClick={() => editor?.chain().focus().setTextAlign("left").run()}>
             <FontAwesomeIcon icon={faAlignLeft} />
           </button>
 
@@ -235,7 +235,9 @@ function NoteEditor({ note, onChange }: Props) {
             }
             type="button"
             title="Align Center"
-            onClick={() => editor.chain().focus().setTextAlign("center").run()}>
+            onClick={() =>
+              editor?.chain().focus().setTextAlign("center").run()
+            }>
             <FontAwesomeIcon icon={faAlignCenter} />
           </button>
 
@@ -247,7 +249,7 @@ function NoteEditor({ note, onChange }: Props) {
             }
             type="button"
             title="Align Right"
-            onClick={() => editor.chain().focus().setTextAlign("right").run()}>
+            onClick={() => editor?.chain().focus().setTextAlign("right").run()}>
             <FontAwesomeIcon icon={faAlignRight} />
           </button>
 
@@ -260,7 +262,7 @@ function NoteEditor({ note, onChange }: Props) {
             type="button"
             title="Align Justify"
             onClick={() =>
-              editor.chain().focus().setTextAlign("justify").run()
+              editor?.chain().focus().setTextAlign("justify").run()
             }>
             <FontAwesomeIcon icon={faAlignJustify} />
           </button>

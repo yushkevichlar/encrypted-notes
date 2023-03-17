@@ -33,28 +33,7 @@ function LoginPage({ setUserData }: Props) {
     e.preventDefault();
 
     if (state.button === "loginWithGoogle") {
-      signInWithPopup(auth, provider).then((data) => {
-        const userEmail = data.user.email.split("@").shift();
-
-        setUserEmail(userEmail);
-
-        const passphrase = uuid();
-
-        storage.set(
-          `${userEmail}:${PASSPHRASE_STORAGE_KEY}`,
-          AES.encrypt(passphrase, userEmail).toString()
-        );
-
-        const creds = AES.encrypt(passphrase, userEmail).toString();
-        const key = `${userEmail}:${PASSPHRASE_STORAGE_KEY}`;
-
-        db.ref(`creds/${key}`).set({ creds });
-        setUserData({ username: userEmail, passphrase });
-
-        localStorage.setItem("email", userEmail);
-
-        return;
-      });
+      handleLoginWithGoogle();
     } else {
       // const encryptedPassphrase = storage.get<string | undefined>(
       //   `${username}:${PASSPHRASE_STORAGE_KEY}`
@@ -64,50 +43,87 @@ function LoginPage({ setUserData }: Props) {
         const snapshot = await db.ref("/creds").get();
 
         if (snapshot.exists()) {
-          let encryptedPassphrase = "";
-
-          const data = snapshot.val();
-
-          for (let key in data) {
-            if (key.split(":").shift() === username) {
-              encryptedPassphrase = data[key].creds;
-            }
-          }
-
-          if (!encryptedPassphrase) {
-            const passphrase = uuid();
-
-            storage.set(
-              `${username}:${PASSPHRASE_STORAGE_KEY}`,
-              AES.encrypt(passphrase, password).toString()
-            );
-
-            const creds = AES.encrypt(passphrase, password).toString();
-            const key = `${username}:${PASSPHRASE_STORAGE_KEY}`;
-
-            db.ref(`creds/${key}`).set({ creds });
-            setUserData({ username, passphrase });
-
-            return;
-          }
-
-          const passphrase = AES.decrypt(
-            encryptedPassphrase,
-            password
-          ).toString(enc.Utf8);
-
-          if (passphrase) {
-            setUserData({ username, passphrase });
-          } else {
-            setErrorText("Invalid credentials for existing user");
-          }
+          handleCredsData(snapshot);
         } else {
-          notifyError("Sorry, something went wrong");
+          notifyError();
         }
       } catch (error) {
         notifyError(`Error - ${error}`);
       }
     }
+  };
+
+  const handleCredsData = (snap: object | any) => {
+    let encryptedPassphrase = "";
+
+    const data = snap.val();
+
+    if (data) {
+      for (let key in data) {
+        if (key.split(":").shift() === username) {
+          encryptedPassphrase = data[key].creds;
+        }
+      }
+
+      if (!encryptedPassphrase) {
+        createNewUser();
+        return;
+      }
+
+      const passphrase = AES.decrypt(encryptedPassphrase, password).toString(
+        enc.Utf8
+      );
+
+      if (passphrase) {
+        setUserData({ username, passphrase });
+      } else {
+        setErrorText("Invalid credentials for existing user");
+      }
+    } else {
+      notifyError();
+    }
+  };
+
+  const createNewUser = () => {
+    const passphrase = uuid();
+
+    // storage.set(
+    //   `${username}:${PASSPHRASE_STORAGE_KEY}`,
+    //   AES.encrypt(passphrase, password).toString()
+    // );
+
+    const creds = AES.encrypt(passphrase, password).toString();
+    const key = `${username}:${PASSPHRASE_STORAGE_KEY}`;
+
+    db.ref(`creds/${key}`).set({ creds });
+    setUserData({ username, passphrase });
+  };
+
+  const handleLoginWithGoogle = () => {
+    signInWithPopup(auth, provider).then((data) => {
+      const userEmail = data.user.email!.split("@").shift();
+
+      if (userEmail) {
+        setUserEmail(userEmail);
+
+        const passphrase = uuid();
+
+        // storage.set(
+        //   `${userEmail}:${PASSPHRASE_STORAGE_KEY}`,
+        //   AES.encrypt(passphrase, userEmail).toString()
+        // );
+
+        const creds = AES.encrypt(passphrase, userEmail).toString();
+        const key = `${userEmail}:${PASSPHRASE_STORAGE_KEY}`;
+
+        db.ref(`creds/${key}`).set({ creds });
+        setUserData({ username: userEmail, passphrase });
+
+        localStorage.setItem("email", userEmail);
+      } else {
+        notifyError();
+      }
+    });
   };
 
   const handleChangeUsername = (e: ChangeEvent<HTMLInputElement>) => {
@@ -122,12 +138,15 @@ function LoginPage({ setUserData }: Props) {
     setVisible(!isVisible);
   };
 
-  const notifyError = (message: string) => toast.error(`${message} ☹️`);
+  const notifyError = (message: string = "Sorry, something went wrong") => {
+    toast.error(`${message} ☹️`);
+  };
 
   useEffect(() => {
-    if (localStorage.getItem("email"))
-      setUserEmail(localStorage.getItem("email"));
-  });
+    if (localStorage.getItem("email")) {
+      setUserEmail(localStorage.getItem("email")!);
+    }
+  }, []);
 
   return (
     <div className={styles.pageContainer}>

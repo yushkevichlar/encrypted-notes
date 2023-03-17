@@ -32,7 +32,7 @@ const loadNotes = async ({ username, passphrase }: UserData) => {
 
       for (let key in data) {
         if (key.split(":").shift() === username) {
-          noteIds.push(key.split(":").pop());
+          noteIds.push(key.split(":").pop()!);
         }
       }
 
@@ -75,14 +75,14 @@ const saveNote = debounce(
     const noteIds = storage.get<string[]>(`${username}:${STORAGE_KEY}`, []);
     const noteIdsWithoutNote = noteIds.filter((id) => id !== note.id);
 
-    storage.set(`${username}:${STORAGE_KEY}`, [...noteIdsWithoutNote, note.id]);
+    // storage.set(`${username}:${STORAGE_KEY}`, [...noteIdsWithoutNote, note.id]);
 
     const encryptedNote = AES.encrypt(
       JSON.stringify(note),
       passphrase
     ).toString();
 
-    storage.set(`${username}:${STORAGE_KEY}:${note.id}`, encryptedNote);
+    // storage.set(`${username}:${STORAGE_KEY}:${note.id}`, encryptedNote);
 
     try {
       const snapshot = await db.ref("/notes").get();
@@ -105,10 +105,7 @@ type Props = {
 };
 
 function App({ userData }: Props) {
-  const [notes, setNotes] = useState<Record<string, Note>>(() =>
-    loadNotes(userData)
-  );
-
+  const [notes, setNotes] = useState<Record<string, Note>>({});
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
   const activeNote = activeNoteId ? notes[activeNoteId] : null;
 
@@ -164,7 +161,7 @@ function App({ userData }: Props) {
 
     for (let key in notes) {
       if (key !== noteId) {
-        notesWithoutNote[key] = notes[key];
+        (notesWithoutNote as any)[key] = notes[key];
       }
     }
 
@@ -175,9 +172,9 @@ function App({ userData }: Props) {
 
   useEffect(() => {
     loadNotes(userData).then((data) => {
-      setNotes(data);
+      setNotes(data!);
     });
-  }, []);
+  }, [userData]);
 
   const notesList = Object.values(notes).sort(
     (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
