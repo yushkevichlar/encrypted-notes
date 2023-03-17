@@ -20,6 +20,7 @@ import {
   faHighlighter,
   faList,
   faListOl,
+  faListCheck,
   faArrowRotateLeft,
   faArrowRotateRight,
 } from "@fortawesome/free-solid-svg-icons";
@@ -29,17 +30,14 @@ import { Note } from "./types";
 const extensions = [
   StarterKit,
   Highlight,
-  // HardBreak.extend({
-  //   addKeyboardShortcuts() {
-  //     return {
-  //       Enter: () => this.editor.commands.setHardBreak(),
-  //     };
-  //   },
-  // }),
   TextAlign.configure({
     types: ["heading", "paragraph"],
   }),
-  TaskList,
+  TaskList.configure({
+    HTMLAttributes: {
+      class: styles.taskList,
+    },
+  }),
   TaskItem.configure({
     nested: true,
   }),
@@ -240,15 +238,16 @@ function NoteEditor({ note, onChange }: Props) {
             <FontAwesomeIcon icon={faListOl} />
           </button>
 
-          {/* <button
+          <button
             className={
               editor?.isActive("taskList")
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            title="Task List"
             onClick={() => editor?.chain().focus().toggleTaskList().run()}>
-            Task List
-          </button> */}
+            <FontAwesomeIcon icon={faListCheck} />
+          </button>
         </div>
 
         <div>
