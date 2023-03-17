@@ -200,6 +200,8 @@ function App({ userData }: Props) {
     <div className={styles.pageContainer}>
       <div className={styles.sidebar}>
         <button
+          type="button"
+          title="Add Note"
           className={styles.sidebarNewNoteBtn}
           onClick={handleCreateNewNote}>
           New Note
@@ -234,7 +236,11 @@ function App({ userData }: Props) {
           ))}
         </div>
 
-        <button className={styles.sidebarLogoutBtn} onClick={handleLogOut}>
+        <button
+          className={styles.sidebarLogoutBtn}
+          type="button"
+          title="Logout"
+          onClick={handleLogOut}>
           <FontAwesomeIcon icon={faRightFromBracket} />
           Logout
         </button>

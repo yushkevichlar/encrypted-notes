@@ -5,7 +5,6 @@ import {
   generateText,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import HardBreak from "@tiptap/extension-hard-break";
 import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
 import TaskItem from "@tiptap/extension-task-item";
@@ -18,6 +17,10 @@ import {
   faCode,
   faParagraph,
   faHighlighter,
+  faAlignLeft,
+  faAlignCenter,
+  faAlignRight,
+  faAlignJustify,
   faList,
   faListOl,
   faListCheck,
@@ -25,11 +28,11 @@ import {
   faArrowRotateRight,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./NoteEditor.module.css";
-import { Note } from "./types";
+import { Note } from "./types"; 
 
 const extensions = [
   StarterKit,
-  Highlight,
+  Highlight, 
   TextAlign.configure({
     types: ["heading", "paragraph"],
   }),
@@ -86,6 +89,7 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
             title="Bold"
             onClick={() => editor?.chain().focus().toggleBold().run()}>
             <FontAwesomeIcon icon={faBold} />
@@ -97,6 +101,7 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
             title="Italic"
             onClick={() => editor?.chain().focus().toggleItalic().run()}>
             <FontAwesomeIcon icon={faItalic} />
@@ -108,6 +113,7 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
             title="Strike"
             onClick={() => editor?.chain().focus().toggleStrike().run()}>
             <FontAwesomeIcon icon={faStrikethrough} />
@@ -119,6 +125,7 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
             title="Code"
             onClick={() => editor?.chain().focus().toggleCode().run()}>
             <FontAwesomeIcon icon={faCode} />
@@ -130,6 +137,7 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
             title="Paragraph"
             onClick={() => editor?.chain().focus().setParagraph().run()}>
             <FontAwesomeIcon icon={faParagraph} />
@@ -141,6 +149,8 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
+            title="H1"
             onClick={() => toggleHeading(1)}>
             H1
           </button>
@@ -151,6 +161,8 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
+            title="H2"
             onClick={() => toggleHeading(2)}>
             H2
           </button>
@@ -161,6 +173,8 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
+            title="H3"
             onClick={() => toggleHeading(3)}>
             H3
           </button>
@@ -171,6 +185,8 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
+            title="H4"
             onClick={() => toggleHeading(4)}>
             H4
           </button>
@@ -181,6 +197,8 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
+            title="H5"
             onClick={() => toggleHeading(5)}>
             H5
           </button>
@@ -191,8 +209,60 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
+            title="H6"
             onClick={() => toggleHeading(6)}>
             H6
+          </button>
+
+          <button
+            className={
+              editor?.isActive("heading", { level: 6 })
+                ? styles.toolbarButtonActive
+                : styles.toolbarButton
+            }
+            type="button"
+            title="Align Left"
+            onClick={() => editor.chain().focus().setTextAlign("left").run()}>
+            <FontAwesomeIcon icon={faAlignLeft} />
+          </button>
+
+          <button
+            className={
+              editor?.isActive("heading", { level: 6 })
+                ? styles.toolbarButtonActive
+                : styles.toolbarButton
+            }
+            type="button"
+            title="Align Center"
+            onClick={() => editor.chain().focus().setTextAlign("center").run()}>
+            <FontAwesomeIcon icon={faAlignCenter} />
+          </button>
+
+          <button
+            className={
+              editor?.isActive("heading", { level: 6 })
+                ? styles.toolbarButtonActive
+                : styles.toolbarButton
+            }
+            type="button"
+            title="Align Right"
+            onClick={() => editor.chain().focus().setTextAlign("right").run()}>
+            <FontAwesomeIcon icon={faAlignRight} />
+          </button>
+
+          <button
+            className={
+              editor?.isActive("heading", { level: 6 })
+                ? styles.toolbarButtonActive
+                : styles.toolbarButton
+            }
+            type="button"
+            title="Align Justify"
+            onClick={() =>
+              editor.chain().focus().setTextAlign("justify").run()
+            }>
+            <FontAwesomeIcon icon={faAlignJustify} />
           </button>
 
           {/* <button
@@ -201,6 +271,8 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
+            title="Code Block"
             onClick={() => editor?.chain().focus().toggleCodeBlock().run()}>
             Code Block
           </button> */}
@@ -211,6 +283,7 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
             title="Highlight"
             onClick={() => editor?.chain().focus().toggleHighlight().run()}>
             <FontAwesomeIcon icon={faHighlighter} />
@@ -222,6 +295,7 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
             title="Bullet List"
             onClick={() => editor?.chain().focus().toggleBulletList().run()}>
             <FontAwesomeIcon icon={faList} />
@@ -233,6 +307,7 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
             title="Ordered List"
             onClick={() => editor?.chain().focus().toggleOrderedList().run()}>
             <FontAwesomeIcon icon={faListOl} />
@@ -244,6 +319,7 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
             title="Task List"
             onClick={() => editor?.chain().focus().toggleTaskList().run()}>
             <FontAwesomeIcon icon={faListCheck} />
@@ -257,6 +333,7 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
             title="Undo"
             onClick={() => editor?.chain().focus().undo().run()}
             disabled={!editor?.can().chain().focus().undo().run()}>
@@ -269,6 +346,7 @@ function NoteEditor({ note, onChange }: Props) {
                 ? styles.toolbarButtonActive
                 : styles.toolbarButton
             }
+            type="button"
             title="Redo"
             onClick={() => editor?.chain().focus().redo().run()}
             disabled={!editor?.can().chain().focus().redo().run()}>

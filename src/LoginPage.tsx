@@ -175,7 +175,7 @@ function LoginPage({ setUserData }: Props) {
           </div>
         </label>
 
-        <button type="submit" className={styles.button}>
+        <button type="submit" title="Login" className={styles.button}>
           Login
         </button>
 
