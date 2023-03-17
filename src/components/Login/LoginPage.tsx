@@ -1,15 +1,16 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { AES, enc } from "crypto-js";
-import storage from "./storage";
+import storage from "../../storage";
 import { v4 as uuid } from "uuid";
-import { UserData } from "./types";
-import { auth, provider, db } from "./db";
+import { UserData } from "../../types";
+import { auth, provider, db } from "../../db";
 import { signInWithPopup } from "firebase/auth";
 import styles from "./LoginPage.module.css";
-import NotesPage from "./NotesPage";
+import NotesPage from "../Notes/NotesPage/NotesPage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import toast, { Toaster } from "react-hot-toast";
 
 const PASSPHRASE_STORAGE_KEY = "passphrase";
 
@@ -32,8 +33,6 @@ function LoginPage({ setUserData }: Props) {
     e.preventDefault();
 
     if (state.button === "loginWithGoogle") {
-      // console.log("Button 2 clicked!");
-
       signInWithPopup(auth, provider).then((data) => {
         const userEmail = data.user.email.split("@").shift();
 
@@ -57,9 +56,6 @@ function LoginPage({ setUserData }: Props) {
         return;
       });
     } else {
-      // if (state.button === "loginWithPassword") {
-      // console.log("Button 1 clicked!");
-
       // const encryptedPassphrase = storage.get<string | undefined>(
       //   `${username}:${PASSPHRASE_STORAGE_KEY}`
       // );
@@ -106,10 +102,10 @@ function LoginPage({ setUserData }: Props) {
             setErrorText("Invalid credentials for existing user");
           }
         } else {
-          console.log("NO DATA");
+          notifyError("Sorry, something went wrong");
         }
       } catch (error) {
-        console.log(error);
+        notifyError(`Error - ${error}`);
       }
     }
   };
@@ -125,6 +121,8 @@ function LoginPage({ setUserData }: Props) {
   const togglePasswordVisibility = () => {
     setVisible(!isVisible);
   };
+
+  const notifyError = (message: string) => toast.error(`${message} ☹️`);
 
   useEffect(() => {
     if (localStorage.getItem("email"))
@@ -192,6 +190,12 @@ function LoginPage({ setUserData }: Props) {
         </button> */}
       </form>
       {/* )} */}
+
+      <Toaster
+        toastOptions={{
+          className: "toastAlert",
+        }}
+      />
     </div>
   );
 }

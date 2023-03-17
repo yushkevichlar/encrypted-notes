@@ -28,11 +28,11 @@ import {
   faArrowRotateRight,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./NoteEditor.module.css";
-import { Note } from "./types"; 
+import { Note } from "../../../types";
 
 const extensions = [
   StarterKit,
-  Highlight, 
+  Highlight,
   TextAlign.configure({
     types: ["heading", "paragraph"],
   }),

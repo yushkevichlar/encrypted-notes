@@ -2,17 +2,20 @@ import { useState, useEffect } from "react";
 import { JSONContent } from "@tiptap/react";
 import { v4 as uuid } from "uuid";
 import styles from "./NotesPage.module.css";
-import NoteEditor from "./NoteEditor";
-import { Note, UserData } from "./types";
-import storage from "./storage";
-import debounce from "./debounce";
+import NoteEditor from "../NoteEditor/NoteEditor";
+import { Note, UserData } from "../../../types";
+import storage from "../../../storage";
+import debounce from "../../../debounce";
 import { AES, enc } from "crypto-js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-regular-svg-icons/faCircleXmark";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-import { db } from "./db";
+import { db } from "../../../db";
+import toast, { Toaster } from "react-hot-toast";
 
 const STORAGE_KEY = "notes";
+
+const notifyError = (message: string) => toast.error(`${message} ☹️`);
 
 const loadNotes = async ({ username, passphrase }: UserData) => {
   // const noteIds = storage.get<string[]>(`${username}:${STORAGE_KEY}`, []);
@@ -60,10 +63,10 @@ const loadNotes = async ({ username, passphrase }: UserData) => {
 
       return notes;
     } else {
-      console.log("NO DATA");
+      notifyError("Sorry, something went wrong");
     }
   } catch (error) {
-    console.log(error);
+    notifyError(`Error - ${error}`);
   }
 };
 
@@ -258,6 +261,12 @@ function App({ userData }: Props) {
           Create a new note or select an existing one
         </div>
       )}
+
+      <Toaster
+        toastOptions={{
+          className: "toastAlert",
+        }}
+      />
     </div>
   );
 }

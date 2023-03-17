@@ -1,6 +1,6 @@
 import { useState } from "react";
-import LoginPage from "./LoginPage";
-import NotesPage from "./NotesPage";
+import LoginPage from "./components/Login/LoginPage";
+import NotesPage from "./components/Notes/NotesPage/NotesPage";
 import { UserData } from "./types";
 
 function App() {
