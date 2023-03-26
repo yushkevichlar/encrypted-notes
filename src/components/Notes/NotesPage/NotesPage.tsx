@@ -9,7 +9,11 @@ import debounce from "../../../debounce";
 import { AES, enc } from "crypto-js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-regular-svg-icons/faCircleXmark";
-import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import {
+  faRightFromBracket,
+  faAnglesRight,
+  faAnglesLeft,
+} from "@fortawesome/free-solid-svg-icons";
 import { db } from "../../../db";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -107,6 +111,7 @@ type Props = {
 function App({ userData }: Props) {
   const [notes, setNotes] = useState<Record<string, Note>>({});
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const activeNote = activeNoteId ? notes[activeNoteId] : null;
 
   const handleChangeNoteContent = (
@@ -198,57 +203,80 @@ function App({ userData }: Props) {
 
   return (
     <div className={styles.pageContainer}>
-      <div className={styles.sidebar}>
-        <button
-          type="button"
-          title="Add Note"
-          className={styles.sidebarNewNoteBtn}
-          onClick={handleCreateNewNote}>
-          New Note
-        </button>
+      {!isSidebarOpen ? (
+        <div className={styles.sidebarCollapsed}>
+          <button
+            className={styles.sidebarCollapseBtn}
+            type="button"
+            title="Expand Sidebar"
+            onClick={() => setIsSidebarOpen(true)}>
+            <FontAwesomeIcon icon={faAnglesRight} />
+          </button>
+        </div>
+      ) : (
+        <div className={styles.sidebar}>
+          <button
+            type="button"
+            title="Add Note"
+            className={styles.sidebarNewNoteBtn}
+            onClick={handleCreateNewNote}>
+            New Note
+          </button>
 
-        <div className={styles.sidebarList}>
-          {notesList.map((note) => (
-            <div key={note.id}>
-              <div className={styles.sidebarItemContainer}>
-                <div
-                  role="button"
-                  tabIndex={0}
-                  className={
-                    note.id === activeNoteId
-                      ? styles.sidebarItemActive
-                      : styles.sidebarItem
-                  }
-                  onClick={() => handleChangeActiveNote(note.id)}>
-                  {note.title}
-                </div>
+          <div className={styles.sidebarList}>
+            {notesList.map((note) => (
+              <div key={note.id}>
+                <div className={styles.sidebarItemContainer}>
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    className={
+                      note.id === activeNoteId
+                        ? styles.sidebarItemActive
+                        : styles.sidebarItem
+                    }
+                    onClick={() => handleChangeActiveNote(note.id)}>
+                    {note.title}
+                  </div>
 
-                <div
-                  role="button"
-                  tabIndex={1}
-                  className={styles.deleteIconContainer}
-                  title="Delete note"
-                  onClick={() => handleDeleteNote(note.id)}>
-                  <FontAwesomeIcon icon={faCircleXmark} />
+                  <div
+                    role="button"
+                    tabIndex={1}
+                    className={styles.deleteIconContainer}
+                    title="Delete note"
+                    onClick={() => handleDeleteNote(note.id)}>
+                    <FontAwesomeIcon icon={faCircleXmark} />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <button
-          className={styles.sidebarLogoutBtn}
-          type="button"
-          title="Logout"
-          onClick={handleLogOut}>
-          <FontAwesomeIcon icon={faRightFromBracket} />
-          Logout
-        </button>
-      </div>
+          <div className={styles.sidebarCollapseBtnWrapper}>
+            <button
+              className={styles.sidebarCollapseBtn}
+              type="button"
+              title="Collapse Sidebar"
+              onClick={() => setIsSidebarOpen(false)}>
+              <FontAwesomeIcon icon={faAnglesLeft} />
+            </button>
+          </div>
+
+          <button
+            className={styles.sidebarLogoutBtn}
+            type="button"
+            title="Logout"
+            onClick={handleLogOut}>
+            <FontAwesomeIcon icon={faRightFromBracket} />
+            Logout
+          </button>
+        </div>
+      )}
 
       {activeNote ? (
         <NoteEditor
           note={activeNote}
+          isSidebarOpen={isSidebarOpen}
           onChange={(content, title) =>
             handleChangeNoteContent(activeNote.id, content, title)
           }

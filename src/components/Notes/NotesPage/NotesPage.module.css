@@ -8,12 +8,27 @@
 .sidebar {
   height: 100vh;
   overflow: auto;
-  min-width: 15rem;
+  max-width: 15%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   border-right: 1px solid #e2e8f0;
   background-color: #9fc6f1;
+}
+
+@media screen and (max-width: 480px) {
+  .sidebar {
+    min-width: 10rem;
+  }
+}
+
+.sidebarCollapsed {
+  height: 100vh;
+  width: 5%;
+  border-right: 1px solid #e2e8f0;
+  background-color: #9fc6f1;
+  display: flex;
+  align-items: flex-end;
 }
 
 .sidebarNewNoteBtn {
@@ -27,6 +42,10 @@
   cursor: pointer;
 }
 
+.sidebarNewNoteBtn:hover {
+  filter: drop-shadow(5px 5px 20px #e2e8f0);
+}
+
 .sidebarLogoutBtn {
   composes: sidebarNewNoteBtn;
   font-size: 0.7rem;
@@ -37,8 +56,18 @@
   gap: 0.5rem;
 }
 
-.sidebarNewNoteBtn:hover {
-  filter: drop-shadow(5px 5px 20px #e2e8f0);
+.sidebarCollapseBtnWrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sidebarCollapseBtn {
+  width: 20px;
+  margin: 1.5rem;
+  text-align: right;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
 .sidebarList {
@@ -59,6 +88,10 @@
 }
 
 .sidebarItem {
+  max-width: 90%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   padding: 0.5rem;
   margin-right: 1.5rem;
   margin-left: 1.5rem;
@@ -81,13 +114,15 @@
   width: 100%;
   display: grid;
   place-items: center;
+  text-align: center;
 }
 
 .deleteIconContainer {
   cursor: pointer;
 }
 
-.deleteIconContainer:hover {
+.deleteIconContainer:hover,
+.sidebarCollapseBtn:hover {
   filter: opacity(0.5);
 }
 
