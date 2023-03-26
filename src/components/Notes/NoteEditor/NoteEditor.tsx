@@ -76,7 +76,7 @@ function NoteEditor({ note, isSidebarOpen, onChange }: Props) {
         },
       },
 
-      onUpdate: ({ editor: any }) => {
+      onUpdate: ({ editor }) => {
         const editorContent = editor?.getJSON();
         const firstNodeContent = editorContent?.content?.[0];
 
