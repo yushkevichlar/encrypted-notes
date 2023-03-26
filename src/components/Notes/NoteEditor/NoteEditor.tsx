@@ -95,6 +95,14 @@ function NoteEditor({ note, isSidebarOpen, onChange }: Props) {
     editor?.chain().focus().toggleHeading({ level: headerLevel }).run();
   };
 
+  const getContainerWidth = () => {
+    if (isFoldingToolbar) {
+      return { maxWidth: isSidebarOpen ? "60%" : "90%" };
+    } else {
+      return { maxWidth: isSidebarOpen ? "85%" : "95%" };
+    }
+  };
+
   useEffect(() => {
     function handleWindowResize() {
       setIsFoldingToolbar(isFoldingToolbarWidth());
@@ -108,9 +116,7 @@ function NoteEditor({ note, isSidebarOpen, onChange }: Props) {
   }, []);
 
   return (
-    <div
-      className={styles.editorContainer}
-      style={{ maxWidth: isSidebarOpen ? "85%" : "95%" }}>
+    <div className={styles.editorContainer} style={getContainerWidth()}>
       {isFoldingToolbar && !toolbarOpen ? (
         <div className={styles.expandBtnWrapper}>
           {" "}

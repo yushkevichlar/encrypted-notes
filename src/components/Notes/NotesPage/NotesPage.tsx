@@ -13,6 +13,7 @@ import {
   faRightFromBracket,
   faAnglesRight,
   faAnglesLeft,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { db } from "../../../db";
 import toast, { Toaster } from "react-hot-toast";
@@ -205,13 +206,58 @@ function App({ userData }: Props) {
     <div className={styles.pageContainer}>
       {!isSidebarOpen ? (
         <div className={styles.sidebarCollapsed}>
-          <button
-            className={styles.sidebarCollapseBtn}
-            type="button"
-            title="Expand Sidebar"
-            onClick={() => setIsSidebarOpen(true)}>
-            <FontAwesomeIcon icon={faAnglesRight} />
-          </button>
+          <div>
+            <button
+              type="button"
+              title="Add Note"
+              className={styles.sidebarNewNoteBtnCollapsed}
+              onClick={handleCreateNewNote}>
+              <FontAwesomeIcon icon={faPlus} />
+            </button>
+          </div>
+
+          <div className={styles.sidebarListCollapsed}>
+            {notesList.map((note) => (
+              <div key={note.id}>
+                <div className={styles.sidebarItemContainer}>
+                  <div
+                    role="button"
+                    title={note.title}
+                    tabIndex={0}
+                    className={
+                      note.id === activeNoteId
+                        ? styles.sidebarItemActiveCollapsed
+                        : styles.sidebarItemCollapsed
+                    }
+                    onClick={() => handleChangeActiveNote(note.id)}>
+                    {note.title}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className={styles.sidebarCollapsedBtnsWrapper}>
+            <div>
+              <button
+                className={styles.sidebarCollapseBtn}
+                type="button"
+                title="Expand Sidebar"
+                onClick={() => setIsSidebarOpen(true)}>
+                <FontAwesomeIcon icon={faAnglesRight} />
+              </button>
+            </div>
+
+            <div>
+              <button
+                className={styles.sidebarLogoutBtn}
+                type="button"
+                title="Logout"
+                onClick={handleLogOut}>
+                <FontAwesomeIcon icon={faRightFromBracket} />
+              </button>
+            </div>
+          </div>
         </div>
       ) : (
         <div className={styles.sidebar}>

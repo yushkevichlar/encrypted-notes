@@ -16,19 +16,15 @@
   background-color: #9fc6f1;
 }
 
-@media screen and (max-width: 480px) {
-  .sidebar {
-    min-width: 10rem;
-  }
-}
-
 .sidebarCollapsed {
   height: 100vh;
   width: 5%;
   border-right: 1px solid #e2e8f0;
   background-color: #9fc6f1;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .sidebarNewNoteBtn {
@@ -70,6 +66,30 @@
   cursor: pointer;
 }
 
+.sidebarNewNoteBtnCollapsed {
+  composes: sidebarNewNoteBtn;
+  margin: 0.5rem;
+  padding: 0.5rem;
+}
+
+@media screen and (max-width: 1300px) {
+  .sidebar {
+    width: 40%;
+  }
+
+  .sidebarCollapsed {
+    width: 10%;
+  }
+
+  .sidebarCollapseBtn {
+    margin: 0.5rem;
+  }
+
+  .sidebarCollapseBtnWrapper {
+    margin: 1.5rem;
+  }
+}
+
 .sidebarList {
   display: flex;
   flex-direction: column;
@@ -80,11 +100,21 @@
   padding-bottom: 0.5rem;
 }
 
+.sidebarListCollapsed {
+  composes: sidebarList;
+  width: 100%;
+}
+
 .sidebarItemContainer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 0.5rem;
+}
+
+.sidebarItemContainerCollapsed {
+  composes: sidebarItemContainer;
+  padding: 0;
 }
 
 .sidebarItem {
@@ -100,6 +130,12 @@
   flex-grow: 3;
 }
 
+.sidebarItemCollapsed {
+  composes: sidebarItem;
+  width: 100%;
+  margin: auto 0;
+}
+
 .sidebarItem:hover {
   background-color: #f1f5f9;
 }
@@ -107,6 +143,18 @@
 .sidebarItemActive {
   composes: sidebarItem;
   background-color: #bfd7f1;
+}
+
+.sidebarItemActiveCollapsed {
+  composes: sidebarItemCollapsed;
+  background-color: #bfd7f1;
+}
+
+.sidebarCollapsedBtnsWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .notSelectedText {
