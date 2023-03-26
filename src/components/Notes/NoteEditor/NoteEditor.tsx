@@ -76,14 +76,16 @@ function NoteEditor({ note, isSidebarOpen, onChange }: Props) {
         },
       },
 
-      onUpdate: ({ editor }) => {
-        const editorContent = editor.getJSON();
-        const firstNodeContent = editorContent.content?.[0];
+      onUpdate: ({ editor: any }) => {
+        const editorContent = editor?.getJSON();
+        const firstNodeContent = editorContent?.content?.[0];
 
-        onChange(
-          editorContent,
-          firstNodeContent && generateText(firstNodeContent, extensions)
-        );
+        if (editorContent) {
+          onChange(
+            editorContent,
+            firstNodeContent && generateText(firstNodeContent, extensions)
+          );
+        }
       },
     },
     [note.id]
